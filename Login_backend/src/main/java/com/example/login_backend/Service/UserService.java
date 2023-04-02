@@ -2,9 +2,11 @@ package com.example.login_backend.Service;
 
 import com.example.login_backend.Model.FileDB;
 import com.example.login_backend.Model.User;
+import com.example.login_backend.Repository.FileDbRepository;
 import com.example.login_backend.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -14,6 +16,8 @@ import java.util.Optional;
 public class UserService  {
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    FileDbRepository fileDbRepository;
 
     public User createUser(User user){
        return userRepository.save(user);
@@ -25,21 +29,20 @@ public class UserService  {
         }
         return null;
     }
-    public FileDB uploadFile(Long userId, MultipartFile multipartFile){
+    public FileDB uploadFile(Long userId, MultipartFile multipartFile) throws IOException{
             User user = getUserById(userId);
             FileDB fileDB = new FileDB();
 
-            fileDB.setName(multipartFile.getOriginalFilename());
+            String fileName = StringUtils.cleanPath(multipartFile.getOriginalFilename());
+
+            fileDB.setName(fileName);
             fileDB.setType(multipartFile.getContentType());
-        try {
             fileDB.setData(multipartFile.getBytes());
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+
             fileDB.setUser(user);
             user.setImage(fileDB);
 
-            return fileDB;
+            return fileDbRepository.save(fileDB);
     }
     public FileDB getFileByUserId(Long userId) {
         User user = getUserById(userId);

@@ -2,6 +2,7 @@ package com.example.login_backend.Controller;
 
 import com.example.login_backend.Model.FileDB;
 import com.example.login_backend.Model.User;
+import com.example.login_backend.Response.MessageResponse;
 import com.example.login_backend.Service.UserService;
 import jakarta.websocket.server.PathParam;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,9 +25,17 @@ public class UserController {
 
     }
     @PostMapping("/upload/{id}")
-    public ResponseEntity<FileDB> uploadFile(@PathVariable("id") Long userId, @RequestParam("file")MultipartFile file) throws IOException {
-           FileDB upFile =   userService.uploadFile(userId,file);
-                return ResponseEntity.ok(upFile );
+    public ResponseEntity<MessageResponse> uploadFile(@PathVariable("id") Long userId, @RequestBody MultipartFile file) throws IOException {
+        String message = "";
+        try {
+           userService.uploadFile(userId,file);
+
+            message = "Uploaded the file successfully: " + file.getOriginalFilename();
+            return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse(message));
+        } catch (Exception e) {
+            message = "Could not upload the file: " + file.getOriginalFilename() + "!";
+            return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(new MessageResponse(message));
+        }
     }
 
     @GetMapping("/user/{id}")
