@@ -14,13 +14,10 @@ public class UserRegisterService {
     @Autowired
     private UserRepository userRepository;
 
-    private static final String EMAIL_REGEX =
-            "^[\\w\\.-]+@[\\w\\.-]+\\.[a-z]{2,}$";
+
 
     public UserRegister createUser(UserRegister userRegister) {
-        if (!validateEmail(userRegister.getEmail())) {
-           throw new ErrorResponse("Invalid Email");
-        }
+
         return userRepository.save(userRegister);
 
 
@@ -34,12 +31,5 @@ public class UserRegisterService {
         return null;
     }
 
-    private static final Pattern EMAIL_PATTERN =
-            Pattern.compile(EMAIL_REGEX, Pattern.CASE_INSENSITIVE);
 
-    public static boolean validateEmail(String email) {
-        Matcher matcher = EMAIL_PATTERN.matcher(email);
-        return matcher.matches();
-
-    }
 }

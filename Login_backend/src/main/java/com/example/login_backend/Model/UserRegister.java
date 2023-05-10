@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.stereotype.Component;
 
 import java.util.Date;
 
@@ -18,6 +19,7 @@ public class UserRegister {
     @NotBlank
     private String name;
 
+   @Column(name = "email",unique = true,nullable = false)
     private String email;
     @Size(min = 6, max =  50)
     private String password;
