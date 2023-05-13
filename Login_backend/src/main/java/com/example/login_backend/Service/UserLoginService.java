@@ -1,7 +1,9 @@
 package com.example.login_backend.Service;
 
 import com.example.login_backend.DTO.UserLogin;
+import com.example.login_backend.Model.UserRegister;
 import com.example.login_backend.Repository.UserRepository;
+import com.example.login_backend.Response.MessageResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -12,11 +14,18 @@ public class UserLoginService {
     @Autowired
     private UserRepository userRepository;
 
-    public UserLogin signIn(String email, String password){
-        UserLogin userLogin1 = userRepository.findEmailAndPassword(email );
-        if(userLogin1 != null && userLogin1.getPassword() == password){
-            return userLogin1;
+    public MessageResponse authenticateUser(UserLogin userLogin) {
+        UserRegister user = userRepository.findByEmail(userLogin.getEmail());
+
+        if (user != null) {
+            // Perform password verification
+            if (userLogin.getPassword().equals(user.getPassword())) {
+                return new MessageResponse("Login successfully !!");
+            }else {
+                return new MessageResponse("Password is not correct !!");
+            }
         }
-        return null;
+
+        return new MessageResponse("Email is not exist !!");
     }
 }

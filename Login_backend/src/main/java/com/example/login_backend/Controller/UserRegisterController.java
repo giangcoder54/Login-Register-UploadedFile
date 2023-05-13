@@ -3,6 +3,7 @@ package com.example.login_backend.Controller;
 import com.example.login_backend.HandleException.ErrorResponse;
 import com.example.login_backend.Model.UserRegister;
 import com.example.login_backend.Service.UserRegisterService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,13 +22,14 @@ public class UserRegisterController {
             "^[\\w\\.-]+@[\\w\\.-]+\\.[a-z]{2,}$";
 
     @PostMapping("/user")
-    public ResponseEntity<UserRegister> createUser(@RequestBody UserRegister userRegister){
+    public ResponseEntity<String> createUser(@RequestBody @Valid UserRegister userRegister){
         if (!validateEmail(userRegister.getEmail())) {
-            throw new ErrorResponse("Invalid Email");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid Email");
+            // throw new ErrorResponse("Invalid email");
         }
      UserRegister createdUserRegister =   userRegisterService.createUser(userRegister);
 
-        return new ResponseEntity<>(createdUserRegister, HttpStatus.CREATED);
+        return ResponseEntity.status(HttpStatus.CREATED).body("Register user successfully");
 
     }
 

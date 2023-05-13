@@ -9,8 +9,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.util.List;
 
 public interface UserRepository extends JpaRepository<UserRegister,Long> {
-    @Query("select email, password from UserRegister where email = :email")
-    UserLogin findEmailAndPassword(@RequestParam("email") String email);
+  UserRegister findByEmail(String email);
+
+
 
 
 

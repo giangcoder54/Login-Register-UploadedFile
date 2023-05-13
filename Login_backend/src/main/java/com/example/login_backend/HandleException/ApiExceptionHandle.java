@@ -1,5 +1,6 @@
 package com.example.login_backend.HandleException;
 
+import com.example.login_backend.Response.MessageResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -14,18 +15,19 @@ import java.util.Map;
 @RestControllerAdvice
 public class ApiExceptionHandle {
     @ExceptionHandler(ErrorResponse.class)
-    public ResponseEntity<ErrorResponse> handleException(ErrorResponse errorResponse){
-        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    public ResponseEntity<MessageResponse> handleException(ErrorResponse errorResponse){
+        MessageResponse MessageResponse = new MessageResponse(errorResponse.getMessage());
+        return new ResponseEntity<>(MessageResponse, HttpStatus.BAD_REQUEST);
     }
 
-//    @ExceptionHandler(MethodArgumentNotValidException.class)
-//    public ResponseEntity<Object> handleValidationException(MethodArgumentNotValidException ex) {
-//        Map<String, String> errors = new HashMap<>();
-//        ex.getBindingResult().getAllErrors().forEach((error) -> {
-//            String fieldName = ((FieldError) error).getField();
-//            String errorMessage = error.getDefaultMessage();
-//            errors.put(fieldName, errorMessage);
-//        });
-//        return ResponseEntity.badRequest().body(errors);
-//    }
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<Object> handleValidationException(MethodArgumentNotValidException ex) {
+        Map<String, String> errors = new HashMap<>();
+        ex.getBindingResult().getAllErrors().forEach((error) -> {
+            String fieldName = ((FieldError) error).getField();
+            String MessageResponse = error.getDefaultMessage();
+            errors.put(fieldName, MessageResponse);
+        });
+        return ResponseEntity.badRequest().body(errors);
+    }
 }
